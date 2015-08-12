@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+<div id="homepage">
+    {% if my_projects %}
+        <u>Projects</u>
+        <ul>
+        {% for project in my_projects %}
+            <li>
+                {{ project.name }}<br />
+                {% if project.parts %}
+                    <ul>
+                    {% for part in project.parts %}
+                        <li> &nbsp; {{ part.name }}: <a href="/canvas/project/{{ project.id }}/part/{{ part.id }}/view/">View</a> | <a href="/canvas/project/{{ project.id }}/part/{{ part.id }}/edit/">Edit</a> <br/>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No projects.</p>
+    {% endif %}
+</div>
+{% endblock %}

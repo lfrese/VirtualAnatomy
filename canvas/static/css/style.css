@@ -1,0 +1,385 @@
+body{
+margin:0;
+padding:0;
+font-family: 'Open Sans', sans-serif;
+}
+img{
+border:0;
+}
+a{
+text-decoration:none;
+color:#000;
+}
+ul, li{
+  margin: 0;
+  padding: 0;
+}
+header{
+height:55px;
+width:100%;
+background-color:#4e4e4e;
+color:#fff;
+font-size:17px;
+border-bottom: 1px solid #000;
+}
+header a{
+color:#fff;
+}
+nav{
+}
+nav ul{
+}
+ul li{
+list-style:none;
+
+}
+
+#logo{
+font-size:20px;
+font-weight:700;
+color:#fff;
+margin-left:20px;
+padding-top:13px;
+float:left;
+}
+.clear{
+clear:both;
+}
+/*********** Navigation *************/
+
+.panel {
+    position: fixed;
+	top:45px;
+    right: -11.825em; /*left or right and the width of your navigation panel*/
+    width: 11.825em; /*should match the above value*/
+	background:#4e4e4e;
+	z-index: 9999;
+}
+
+
+#menu span{
+font-size:20px;
+}
+#menu a{
+color:#fff;
+}
+#menu-bars{
+color:#fff;
+float:right;
+font-size:21px;
+margin-right:20px;
+margin-top:12px;
+}
+.panel ul{
+2px solid #2a2929;
+}
+.panel a{
+display: block;
+  border-bottom: 1px solid #999999;
+  border-left:1px solid #4e4e4e;
+  padding: 0.8em;
+  color:#fff;
+}
+.wrap { 
+    position: relative; 
+}
+
+/*********** Main *************/
+main{
+}
+
+/*********** Left Tools *************/
+label{
+display:none;
+}
+#left-tools{
+background:#ddd;
+width:120px;
+height:100%;
+position: fixed;
+border-right: 1px solid #4e4e4e;
+padding-left:20px;
+padding-top:15px;
+font-size:13px;
+}
+
+#imagehandler{
+
+margin-bottom:10px;
+}
+
+#left-tools input{
+width:87px;
+}
+
+#chosenfilename{
+font-size:13px;
+max-width: 117px;
+  overflow: hidden;
+}
+
+.fileUpload {
+	position: relative;
+	overflow: hidden;
+	width:80px;
+    text-align:center;
+}
+.fileUpload input.upload {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	font-size: 20px;
+	cursor: pointer;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+
+.btn-primary{
+color: #fff;
+  border: 1px solid #D8D8D8;
+  background-color:#666;
+    border-radius: 4px;
+    padding:6px;
+}
+.btn-primary span{
+    cursor: pointer;
+}   
+
+#panicon{
+background-image:url(../Images/move64.png);
+background-size: 50px 50px;
+background-repeat:no-repeat;
+width:50px;
+height:50px;
+margin-left:25px;
+margin-bottom:10px;
+}
+
+#penicon{
+background-image:url(../Images/pen64.png);
+background-size: 50px 50px;
+background-repeat:no-repeat;
+width:50px;
+height:50px;
+margin-left:25px;
+margin-bottom:10px;
+}
+
+.pancursor{
+cursor: move;
+}
+
+#cbFill{
+width:30px !important;
+margin-bottom:10px;
+}
+
+#zoom, #do{
+display:block;
+margin-bottom:7px;
+}
+
+#zoomin{
+background-image:url(../Images/zoomIn.png);
+background-size: 30px 30px;
+background-repeat:no-repeat;
+width:30px;
+height:30px;
+display:inline-block;
+margin-left:15px;
+}
+#zoomout{
+background-image:url(../Images/zoomOut.png);
+background-size: 30px 30px;
+background-repeat:no-repeat;
+width:30px;
+height:30px;
+display:inline-block;
+margin-left:5px;
+}
+
+#undo{	
+background-image: url("../Images/undo64.png");
+background-size: 30px 30px;
+width:30px;
+height:30px;
+display:inline-block;
+margin-left:7px;
+}
+#redo{	
+	background-image: url("../Images/redo64.png");
+    background-size: 30px 30px;
+    width:30px;
+height:30px;
+display:inline-block;
+margin-left:7px;
+}
+
+/*********** Canvas *************/
+#maincanvas{
+  position: relative;
+  left: 141px;
+}
+
+#canvas{
+position:fixed;
+cursor:pointer;
+}
+
+/*********** Right Tools *************/
+#right-tools{
+
+}
+
+#sorter, #layermanager{
+width:200px;
+right: -175px;
+width: 200px; 
+background:#ddd;
+height:100%;
+position: fixed;
+border-left: 1px solid #4e4e4e;
+font-size:13px;
+}	
+
+#layermanager{
+width:225px;
+right:-175px;
+}
+
+#puller, #layerpuller{
+width:25px;
+padding-left:4px;
+position:fixed;
+height:100%;
+background:#4e4e4e;
+color:#fff;
+font-size:15px;
+padding-top:80px;
+cursor:pointer;
+border-left: 1px solid #000;
+}
+#layerpuller{
+padding-left:0;
+padding-top:120px;
+}
+#sortercontainer, #layercontainer{
+width:200px;
+overflow-y: scroll;
+max-height:100%;
+}
+#layercontainer{
+width:225px;
+margin-right:25px;
+}
+#sortercontainer .layer{
+width: 170px;
+right:0;
+padding-top: 10px;
+text-align: right;
+padding-left: 8px;
+}
+
+#sortercontainer .layer img{
+width:140px;
+height:auto;
+cursor: move;
+}
+
+.vertical-text{
+transform: rotate(90deg);
+margin-top:7px;
+}
+
+.faded {
+    opacity: 0.4;
+}
+
+/***** Layer details overlay ******/
+#layerdetails{
+width:600px;
+height:310px;
+left: 200px;
+position:absolute;
+top:100px;
+padding:20px;
+background-color:#FFFFFF;
+-webkit-border-radius: 12px;
+-moz-border-radius: 7px; 
+border-radius: 7px;
+-webkit-box-shadow: 0px 0px 26px rgba(0, 0, 0, 0.4); 
+-moz-box-shadow: 0px 1px 6px rgba(23, 69, 88, .5);
+border: 2px solid #666;
+  font-size: 14px;
+}
+#closedetails{
+float:right;
+margin-right:30px;
+cursor:pointer;
+  position: relative;
+  top: -10px;
+  right: -20px;
+}
+
+/***** View ****/
+#viewcontainer{
+width:100%;
+height:100%;
+}
+#viewlayers{
+    background: #ddd;
+    width:200px;
+    height:75%;
+    border-right: 1px solid #4e4e4e;
+    border-bottom: 1px solid #4e4e4e;
+    padding-left:20px;
+    padding-top:15px;
+    font-size:13px;
+    position:absolute;
+}
+
+#viewlayers ul{
+list-style:none;
+}
+#viewlayers ul li{
+cursor:pointer;
+}
+#viewlayers .layer{
+color:blue;
+text-decoration:underline;
+}
+#viewcontainer #maincanvas{
+  left: 220px;
+}
+#bottomdetails{
+position:absolute;
+left:220px;
+background:#ddd;
+border: 1px solid #4e4e4e;
+height:200px;
+width:800px;
+padding-top:15px;
+font-size:13px;
+bottom:0;
+}
+
+/**** Home ****/
+#homepage{
+padding-left:20px;
+padding-top:20px;
+}
+#homepage a{
+color:blue;
+}
+#homepage li{
+margin: 10px;
+}
+/***** Footer *****/
+footer{
+font-size:13px;
+position:absolute;
+bottom:0;
+left: 150px;
+}

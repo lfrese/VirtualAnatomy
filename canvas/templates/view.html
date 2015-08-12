@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block head %}
+{% load staticfiles %}
+<script src="{% static 'scripts/drawv5.js' %}"></script>
+<script src="{% static 'scripts/viewcontrols.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+<div id="viewcontainer">
+    <section id="viewlayers">
+        {% if layers %}
+            <ul>
+            {% for layer in layers %}
+                <li><div id="layer{{layer.id}}" class="layer">{{ layer.name }}</div></li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        
+    </section>
+    
+    <section id="maincanvas">
+    
+    </section>
+    
+    <section id="bottomdetails">
+        <div id="detailname"></div>
+        <div id="detaildetails"></div>
+    </section>
+    
+</div>
+
+<script>
+$(document).ready(function() {
+    setBackground("/canvas/media/{{image}}");
+    var layers = []
+    var layerlist = []
+     {% if layers %}
+        var i = 0;
+            {% for layer in layers %}
+                layers[i] = {"id":"{{layer.id}}","name":"{{ layer.name }}","description":"{{layer.description}}","type":"{{layer.type}}","layerdata":{{layer.layerdata|safe}} }
+                layerlist[i] = {{layer.id}}
+                i++;
+            {% endfor %}
+        {% endif %}
+        
+    $("#viewlayers .layer").click(function(){
+        var thisid = $(this).attr("id");
+        var layerid = thisid.replace("layer","");
+        var index = layerlist.indexOf(parseInt(layerid));
+        var layerdata = layers[index]
+        $("#detailname").text(layerdata.name);
+        $("#detaildetails").text(layerdata.description);
+    });
+    
+});
+</script>
+
+{% endblock %}

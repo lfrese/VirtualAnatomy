@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block head %}
+{% load staticfiles %}
+<script src="{% static 'scripts/drawv5.js' %}"></script>
+<script src="{% static 'scripts/Sortable-master/Sortable.js' %}"></script>
+<script src="{% static 'scripts/controls.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+    
+<div id="pagecanvas">
+	<section id="left-tools">
+        <div id="imagehandler">
+            <form id="uploadimageform" action="" method="post" enctype="multipart/form-data">            
+                <div class="fileUpload btn btn-primary">
+                    <span>New Image</span>
+                    {{ form }}
+                </div>
+                <div id="chosenfilename"></div>
+                <div id="imghandlerButtons" style="display:none;">
+                    <button type="button" id="btnImgUpload">Upload</button> 
+                    <button type="button" id="btnImgClear">Clear</button>
+                </div>
+            </form>
+        </div>
+        <div id="layertools" style="display:none;">   
+            <div id="colorpalette"></div>
+            <div id="penicon"></div>
+            <div id="panicon"></div>
+            Fill? <input type="checkbox" id="cbFill" name="Fill" value="Fill" checked> 
+            <div id="do"><div id="undo"></div><div id="redo"></div></div>
+            <div id="do"><div id="zoomin"></div><div id="zoomout"></div></div>
+            <button id="clearCanvas" type="button">Clear Layer</button>
+            <div><button class="overlay-trigger" data-overlay="detail-overlay">Add Details</button></div>
+            <div id="addlayer"><button>Save Layer</button></div>
+        </div>
+    </section>
+    
+    <section id="maincanvas">
+    </section>
+    
+    <section id="right-tools">
+    	<div id="layermanager">
+        	<div id="layerpuller">&nbsp;<span class="fa fa-arrow-left"></span><span class="fa fa-arrow-right" style="display:none;"></span><br>
+            <div class="vertical-text">Layers</div></div>
+            <div id="layercontainer">
+            </div>
+        </div>
+    	<div id="sorter">
+        	<div id="puller">&nbsp;<span class="fa fa-arrow-left"></span><span class="fa fa-arrow-right" style="display:none;"></span><br>
+            <div class="vertical-text">Images</div></div>
+            <div id="sortercontainer">
+            	<div style="text-align:center;">ORDER</div>                
+            	<ul id="sortable-list">
+                    {% if images %}
+                    {% for image in images %}
+                    <li class="layer">
+                        <img src="/canvas/media/{{ image.src }} " >
+                    </li>  
+                    {% endfor %}  
+                    {% endif %}
+                </ul>                
+            </div>
+        </div>
+        
+    </section>
+    
+    <section id="detail-overlay">
+    	<div id="layerdetails" style="display:none;">
+        	<div id="closedetails"><span class="fa fa-times"></span></div>
+        	<form id="layerform" action="" method="post" enctype="multipart/form-data">
+                <div id="layername">
+                	Name: <input type="text" name="name" id="inLayerName" />
+                </div><br>
+                <div id="layertype">
+                	Type: <input type="text" name="type" id="inLayerType" /> (nn, aa, vv, dissection)
+                </div><br>
+                <div id="uploadaudio">     
+                    Audio File: <input type="file" name="audio_src" id="inAudio" accept="audio/*" />       		            
+                </div><br>
+                <div id="layerinfo">
+                	Details:<br> <textarea rows="10" cols="80" name="description" id="tbDetails"></textarea><br/>
+                    Note: If you want to link to another layer, preface that layer name with #<br/>
+                </div>
+                <input type="hidden" name="ismage" id="hfIsmage" value="">
+                <input type="hidden" name="layerdata" id="hfCoords" value="">
+            </form>
+        </div>
+    </section>
+</div>
+
+
+<script>
+//Set the order num of the next image uploaded
+$(document).ready(function(){
+    var numImages = $("#sortable-list .layer").length;
+    $("#hfImgorder").val(numImages+1);
+    $("#imgpart").val({{part_data.id}});
+    });
+</script>
+
+    
+{% endblock %}
