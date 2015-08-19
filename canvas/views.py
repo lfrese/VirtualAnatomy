@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from .forms import ImageUploadForm
 from .models import *
 from .methods import *
-#import json
+import json
 
 def index(request):
     my_projects = Project.objects.all()    
@@ -31,7 +31,7 @@ def viewpart(request, project_id, part_id, ismage_id=0):
     ismage = Ismage()
     if ismage_id == 0:
         ismage = Ismage.objects.filter(part=part_id).filter(order=1)
-        print (ismage[0])
+        #print (ismage[0])
     else:
         ismage = Ismage.objects.get(id=ismage_id)
         
@@ -51,13 +51,13 @@ def upload_image(request):
         part = Part.objects.get(pk=request.POST['part'])
         newimg = Ismage(src = request.FILES['src'], part = part, order=request.POST['order'], fn=request.POST['fn'])            
         newimg.save()
-        return HttpResponse(newimg.src.name)         
+        return HttpResponse(json.dumps({"name":newimg.src.name,"id":newimg.id}))         
     return HttpResponse("post")
 
 #TODO: when image is deleted we need to manually remove from file system http://stackoverflow.com/questions/5372934/how-do-i-get-django-admin-to-delete-files-when-i-remove-an-object-from-the-datab
 #def post delete:   
 
-   
+@requires_csrf_token      
 def save_layer(request):
     if request.method == 'POST':  
         image = Ismage.objects.filter(src = request.POST['ismage']);
@@ -70,16 +70,34 @@ def save_layer(request):
                 newLayer = Layer(name = request.POST['name'], description = request.POST['description'], type = request.POST['type'], audio_src = request.FILE['audio_src'], layerdata = request.POST['layerdata'])
                 newLayer.save()
                 newLayer.ismage.add(image[0])
-            return HttpResponse(newLayer.name)         
+            return HttpResponse(newLayer.id)         
         return HttpResponse("bad img")
-        
-# def get_layer_data(request):
-    # if request.method=="POST":
-        # layer = Layer.objects.get(id=request.POST.get('layerid'))
-        # jsonlayer = {}
-        # jsonlayer['id'] = layer.id
-        # jsonlayer["name"] = layer.name
-        # jsonlayer["description"] = layer.description
-        # jsonlayer["type"] = layer.type
-        # jsonlayer["layerdata"] = layer.layerdata
-        # return HttpResponse(json.dumps(jsonlayer),content_type="application/json")
+ 
+def get_layers_by_image_id(request, ismage_id):
+    ismage = Ismage()
+    if ismage_id != 0:
+        ismage = Ismage.objects.get(id=ismage_id)
+        layers = Layer.objects.filter(ismage = ismage)
+        layer_list = []
+        for layer in layers:
+            layer_data = {}
+            layer_data['id'] = layer.id
+            layer_data['name'] = layer.name
+            layer_list.append(layer_data)
+        return HttpResponse(json.dumps(layer_list), content_type="application/json")
+    else:
+        return HttpResponse("Error getting layers from image " + image_id)
+         
+def get_layer_data(request, layer_id):
+    layer = Layer()
+    if layer_id:
+        layer = Layer.objects.get(id=layer_id)
+        jsonlayer = {}
+        jsonlayer['id'] = layer.id
+        jsonlayer["name"] = layer.name
+        jsonlayer["description"] = layer.description
+        jsonlayer["type"] = layer.type
+        jsonlayer["layerdata"] = layer.layerdata
+        return HttpResponse(json.dumps(jsonlayer))
+    else:
+        return HttpResponse("Error getting data from layer " + layer_id)

@@ -45,6 +45,10 @@
         	<div id="layerpuller">&nbsp;<span class="fa fa-arrow-left"></span><span class="fa fa-arrow-right" style="display:none;"></span><br>
             <div class="vertical-text">Layers</div></div>
             <div id="layercontainer">
+                <div class="layer_controls">
+                    <div class="layer_control show_all_layers">SHOW ALL</div> | 
+                    <div class="layer_control clear_all_layers">HIDE ALL</div>
+                </div>
             </div>
         </div>
     	<div id="sorter">
@@ -55,7 +59,7 @@
             	<ul id="sortable-list">
                     {% if images %}
                     {% for image in images %}
-                    <li class="layer">
+                    <li class="layer" id="{{image.id}}">
                         <img src="/canvas/media/{{ image.src }} " >
                     </li>  
                     {% endfor %}  
@@ -70,6 +74,7 @@
     	<div id="layerdetails" style="display:none;">
         	<div id="closedetails"><span class="fa fa-times"></span></div>
         	<form id="layerform" action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div id="layername">
                 	Name: <input type="text" name="name" id="inLayerName" />
                 </div><br>

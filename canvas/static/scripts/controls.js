@@ -82,13 +82,15 @@ $(document).ready(function() {
     }
     
     //Adds the newly uploaded image to the image div & canvas seamlessly
-    function addNewImageToImagesDiv(filename){
+    function addNewImageToImagesDiv(json_data){
+        var data = JSON.parse(json_data);
         $(".layer.last").removeAttr('style');
         $(".layer.last").removeClass('last');
-        var codeblock = '<li class="layer last"><img src="/canvas/media/'+filename+' "></li>';
+        var codeblock = '<li class="layer last" id="'+data.id+'"><img src="/canvas/media/'+data.name+' "></li>';
         $("#sortable-list").append(codeblock);
         $("#sortercontainer .layer:last").css('height',$("#sortercontainer .layer:last").height()+50);
-        setBackground('/canvas/media/'+filename);
+        setBackground('/canvas/media/'+data.name);
+        $("#layercontainer").html("");
         $("#layertools").show();
     }
      //handle details overlay
@@ -180,7 +182,35 @@ $(document).ready(function() {
 		alert(lst);
 	}
     //***** Main canvas tools ****//
-     
+    //get layer data when the layer in the layermanager is clicked on
+     $("#layermanager").on('click', '.image_layer', function(){
+        var layer_id = this.id;
+        var showing = false;
+        if(!$(this).hasClass("showing")){
+             $(this).addClass("showing");             
+        }else{
+            showing = true;
+        }       
+        getLayerData(layer_id, showing);
+    });
+    
+    //Hide all layers
+    $(".clear_all_layers").click(function(){
+        $('#clearCanvas').trigger('click'); 
+        $('#layerform').trigger("reset");
+        $("#hfCoords").val('');
+        $("#tbDetails").val('');
+        $("#inAudio").val('');
+        $("#inLayerName").val('');
+        $("#inLayerType").val('');
+        $("#tbDetails").val('');
+        $("#hfIsmage").val('');
+        context.drawImage(backgroundImage,0,0);
+        $(".image_layer").each(function(){
+            $(this).removeClass("showing");
+        });
+    });
+    
 });
 
 
@@ -200,6 +230,8 @@ function addLayer(){
             contentType: false,
             success: function(returned){
                alert("Layer successfully saved");
+               var html = "<div class='image_layer' id='"+returned+"'>"+$('form#layerform #layername input').val()+"</div>";
+               $("#layercontainer").append(html);
                //clear layer
                $('#clearCanvas').trigger('click'); 
                $('#layerform').trigger("reset");
@@ -233,6 +265,55 @@ function addLayer(){
         return isvalid;        
      }	
 	
+//Get layers associated with image by image_id
+function getLayers(image_id){
+    getCSRF();
+    $.ajax({ 
+        type: "GET",
+        url: "/canvas/getlayers/image/"+image_id,
+        processData: false,
+        contentType: false,
+        success: function(returned){
+            var html = "";
+            for(var i=0;i<returned.length;i++){
+                html += "<div class='image_layer' id='"+returned[i].id+"'>";
+                html += returned[i].name;
+                html += "</div>";
+            }
+            $("#layercontainer").append(html);
+        },
+        error: function(returned){
+            console.log(returned);
+        }
+    });    
+}
+
+
+//Get layer data by layer_id
+function getLayerData(layer_id, showing){
+    getCSRF();
+    $.ajax({ 
+        type: "GET",
+        url: "/canvas/getlayerdata/layer/"+layer_id,
+        processData: false,
+        contentType: false,
+        success: function(returned){
+            var data = JSON.parse(returned);
+            $("#layerform #layername input").val(data.name);
+            $("#layerform #layertype input").val(data.type);
+            $("#layerform #uploadaudio input").val(data.audio_src);
+            $("#layerform #layerinfo textarea").val(data.description);
+            //If the layer isnt currently showing on the drawing
+            if(!showing){
+                buildEvent(JSON.parse(data.layerdata).layers[0]);
+            }
+        },
+        error: function(returned){
+            console.log(returned);
+        }
+    });    
+}
+    
 //needed to get the CSRF token otherwise
 //django wont let us upload 	
 function getCookie(name) {

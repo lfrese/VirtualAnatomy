@@ -265,6 +265,27 @@ border-left: 1px solid #000;
 padding-left:0;
 padding-top:120px;
 }
+
+#layercontainer{
+    padding-top:7px;
+}
+
+#layercontainer .image_layer{
+padding-left: 40px;
+color: blue;
+cursor:pointer;
+}
+#layercontainer .layer_controls{
+    padding-left:33px;
+}
+#layercontainer .layer_control{
+    display:inline-block;
+    color: blue;
+    cursor:pointer;
+    text-decoration:underline;
+    padding-bottom:8px;
+}
+
 #sortercontainer, #layercontainer{
 width:200px;
 overflow-y: scroll;

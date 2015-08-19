@@ -171,7 +171,7 @@ $(document).ready(function() {
                 coorddata += '","strokecolor":"'+eventHistory[i].strokecolor;
                 coorddata += '","coords":[';
                 for(var j = 0; j<eventHistory[i].list.length; j++){
-                    coorddata += '{"x":'+eventHistory[i].list[j][0]+',"y":"'+eventHistory[i].list[j][1]+'"},';
+                    coorddata += '{"x":'+eventHistory[i].list[j][0]+',"y":'+eventHistory[i].list[j][1]+'},';
                 }
                 coorddata = coorddata.substring(0, coorddata.length - 1) + "]},";
             }
@@ -204,6 +204,7 @@ function prepareCanvas() {
 function checkBackground(elem){
     var isSameBg = false;
     var newbgsrc = $(elem).find('img').attr('src');
+    var image_id = elem.id;
     if(backgroundImage.src != ''){
         if(splitBgName(backgroundImage.src) == splitBgName(newbgsrc)){
             isSameBg = true;
@@ -223,7 +224,7 @@ function checkBackground(elem){
         if(erase){
             penlist = new Array();
             clearCanvas();
-            setBackground(newbgsrc);
+            setBackground(newbgsrc, image_id);
         }
     }
 }   
@@ -231,7 +232,7 @@ function splitBgName(name){
     var sp = name.split('/');
     return sp[sp.length-1].trim();
 }   
-function setBackground(newbgsrc){
+function setBackground(newbgsrc, image_id){
     zoom = 1;
     backgroundImage.src = null;		
     backgroundImage.onload = function(){
@@ -245,6 +246,9 @@ function setBackground(newbgsrc){
     }            
     backgroundImage.src = newbgsrc;
     $("#layertools").show();	
+    
+    //Load the layers associated with this image
+    getLayers(image_id);
 }
 
 function redraw(newimg){
@@ -446,3 +450,28 @@ function zooming()
 	}
 };
 //------------------------------------------------------------------------------
+
+//Draws the layer on the canvas based on the layerdata
+//when the layer name is clicked   
+function buildEvent(event){
+    //var canvas = document.getElementById('canvas'); 
+    //context = canvas.getContext("2d");	
+    context.save();
+	context.lineCap = 'round';
+	context.strokeStyle = event.strokecolor;
+	context.fillStyle = event.fillcolor;
+	context.lineWidth = event.linewidth;
+	context.beginPath();
+	context.moveTo(event.coords[0].x+cx/zoom,parseInt(event.coords[0].y)+cy/zoom);
+	for(var i=1; i<event.coords.length; i++)
+	{
+		context.lineTo(event.coords[i].x+cx/zoom,parseInt(event.coords[i].y)+cy/zoom);
+        context.stroke();
+	}
+	if(event.fill){
+		context.closePath();
+		context.fill();
+	}
+	
+	context.restore();
+}
