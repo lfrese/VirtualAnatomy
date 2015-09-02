@@ -14,7 +14,7 @@
                 {% if project.parts %}
                     <ul>
                     {% for part in project.parts %}
-                        <li> &nbsp; {{ part.name }}: <a href="/canvas/project/{{ project.id }}/part/{{ part.id }}/view/">View</a> | <a href="/canvas/project/{{ project.id }}/part/{{ part.id }}/edit/">Edit</a> <br/>
+                        <li> &nbsp; {{ part.name }}: <a href="/canvas/project/{{ project.id }}/part/{{ part.id }}/view/image/0">View</a> | <a href="/canvas/project/{{ project.id }}/part/{{ part.id }}/edit/">Edit</a> <br/>
                     {% endfor %}
                     </ul>
                 {% endif %}

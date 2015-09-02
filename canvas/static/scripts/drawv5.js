@@ -20,20 +20,41 @@ var fillopacity = '0.25';
 var strokecolor = 'rgba(0,0,0,1)';
 var fillcolor = strokecolor.replace(/[^,]+(?=\))/, fillopacity);
 var pensize = 2;
-var tool = "pen";
+var tool = "";
 var fill = true;
+var inEditMode = false;
+var layerid = 0;
+
 
 $(document).ready(function() {
     prepareCanvas();
     setupPalette();
     //handle cursor
     $("#penicon").click(function(){
-       tool = "pen";
+        if(inEditMode){
+            tool = "pen";
+        }
     });
     $("#panicon").click(function(){
         tool = "moveimage";
     });
 
+    $("#newLayer").click(function(){
+        var erase = true;
+        if(eventHistory.length !=0 && inEditMode){
+            erase = confirm("you have an unsaved layer, creating a new layer will erase your drawings. Press OK to ERASE");            
+        }
+        if(erase){
+            $('#clearCanvas').trigger('click'); 
+            tool = "pen"; 
+            inEditMode = true; 
+            layerid = 0;  
+            $("#penicon").removeClass("desaturate"); 
+            clearShowing();             
+        }
+        
+    });
+    
     //handle zoom
     $("#zoomin").click(function(e){
         var pos = findPos(this);
@@ -81,6 +102,7 @@ $(document).ready(function() {
     });
     
     //-----------------------------------------------------------------------------
+    //double click on image thumb puts it in the canvas frame
     $(".layer").dblclick(function(){
         checkBackground(this);    
     });
@@ -91,31 +113,36 @@ $(document).ready(function() {
             $("#canvas").css("cursor","move");
         }
         if(tool == "pen"){
-            $("#canvas").css("cursor","pointer");
+            $("#canvas").css("cursor","crosshair");
         }
     }); 
         
     //-----------------------------------------------------------------------------
     $('#canvas').mousedown(function (e) {
-        var pos = findPos(this);
-        var x = e.pageX - pos.x;
-        var y = e.pageY - pos.y;
-        eventstart(x/zoom-translateX, y/zoom-translateY);
-        
+        if(inEditMode){
+            var pos = findPos(this);
+            var x = e.pageX - pos.x;
+            var y = e.pageY - pos.y;
+            eventstart(x/zoom-translateX, y/zoom-translateY);
+        }
     });
 
     $('#canvas').mousemove(function (e) {
-        var pos = findPos(this);
-        var x = e.pageX - pos.x;
-        var y = e.pageY - pos.y;
-        eventmove(x/zoom-translateX, y/zoom-translateY);
+        if(inEditMode){
+            var pos = findPos(this);
+            var x = e.pageX - pos.x;
+            var y = e.pageY - pos.y;
+            eventmove(x/zoom-translateX, y/zoom-translateY);
+        }
     });
 
     $('#canvas').mouseup(function (e) {
-        var pos = findPos(this);
-        var x = e.pageX - pos.x;
-        var y = e.pageY - pos.y;
-        eventend(x/zoom-translateX, y/zoom-translateY);
+        if(inEditMode){
+            var pos = findPos(this);
+            var x = e.pageX - pos.x;
+            var y = e.pageY - pos.y;
+            eventend(x/zoom-translateX, y/zoom-translateY);
+        }
     });
 
     $('#canvas').mouseleave(function (e) {
@@ -144,7 +171,7 @@ $(document).ready(function() {
 });
     
     $('#clearCanvas').click(function (e) {
-        penlist = new Array();   
+         penlist = new Array();   
         translateX = 0;
         translateY = 0;
         translateXTemp = 0;
@@ -155,8 +182,19 @@ $(document).ready(function() {
         eventHistory=new Array();
         clearCanvas();
         redraw(false);
+        tool = "";
+       $('#layerform').trigger("reset");
+       $("#hfCoords").val('');
+       $("#tbDetails").val('');
+       $("#inAudio").val('');
+       $("#inLayerName").val('');
+       $("#inLayerType").val('');
+       $("#tbDetails").val('');
+       $("#hfIsmage").val('');
+       $("#canvas").css("cursor","auto");
     });
     
+    //save the layer
     //Get the X, Y coords associated with the data
     $("#addlayer").on("click",function(){      
         
@@ -180,7 +218,7 @@ $(document).ready(function() {
             var ismage_name = backgroundImage.src.split('/');
             $("#hfCoords").val(coorddata);
             $("#hfIsmage").val(ismage_name[ismage_name.length -2]+'/'+ismage_name[ismage_name.length -1]);            
-            addLayer();
+            addLayer(layerid);
             //var rrr = JSON.parse(coorddata);
             //console.log(rrr);
         }
@@ -197,7 +235,11 @@ function prepareCanvas() {
     context.save();     
 }
 
+//-----------------------------------------------------------------------------
 
+function clearDrawings(){
+    
+}
 
 //------------------------------------------------------------------------------
 //WHen changing the background we need to see if there are any unsaved layers
@@ -454,8 +496,7 @@ function zooming()
 //Draws the layer on the canvas based on the layerdata
 //when the layer name is clicked   
 function buildEvent(event){
-    //var canvas = document.getElementById('canvas'); 
-    //context = canvas.getContext("2d");	
+    var penlist = new Array();
     context.save();
 	context.lineCap = 'round';
 	context.strokeStyle = event.strokecolor;
@@ -463,10 +504,12 @@ function buildEvent(event){
 	context.lineWidth = event.linewidth;
 	context.beginPath();
 	context.moveTo(event.coords[0].x+cx/zoom,parseInt(event.coords[0].y)+cy/zoom);
+    penlist.push([event.coords[0].x,event.coords[0].y]);
 	for(var i=1; i<event.coords.length; i++)
 	{
 		context.lineTo(event.coords[i].x+cx/zoom,parseInt(event.coords[i].y)+cy/zoom);
         context.stroke();
+        penlist.push([event.coords[i].x,event.coords[i].y]);
 	}
 	if(event.fill){
 		context.closePath();
@@ -474,4 +517,12 @@ function buildEvent(event){
 	}
 	
 	context.restore();
+    
+    //Add event to eventHistory
+    
+    var eventHis = {list:penlist.slice(), fillcolor:event.fillcolor, strokecolor:event.strokecolor, fill:event.fill, linewidth:event.linewidth};
+    eventHistory=eventHistory.splice(0,eventIndex+1);
+    eventHistory.push(eventHis);
+    eventIndex++;
+    penlist=new Array();
 }

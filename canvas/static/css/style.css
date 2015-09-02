@@ -45,6 +45,13 @@ float:left;
 .clear{
 clear:both;
 }
+
+.desaturate{
+-webkit-filter: grayscale(100%);
+filter: gray;
+filter: grayscale(100%);
+}
+
 /*********** Navigation *************/
 
 .panel {
@@ -146,6 +153,11 @@ color: #fff;
 .btn-primary span{
     cursor: pointer;
 }   
+
+#newLayer{
+margin-top:10px;
+margin-bottom:10px;
+}
 
 #panicon{
 background-image:url(../Images/move64.png);
@@ -274,7 +286,15 @@ padding-top:120px;
 padding-left: 40px;
 color: blue;
 cursor:pointer;
+border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+    padding-top: 4px;
 }
+
+#layercontainer .image_layer .control{
+    font-size:11px;
+}
+
 #layercontainer .layer_controls{
     padding-left:33px;
 }
@@ -307,6 +327,11 @@ padding-left: 8px;
 width:140px;
 height:auto;
 cursor: move;
+}
+#sortercontainer .delete_image{
+    color:blue;
+    cursor:pointer;
+    padding-bottom:5px;
 }
 
 .vertical-text{
@@ -374,6 +399,19 @@ text-decoration:underline;
 #viewcontainer #maincanvas{
   left: 220px;
 }
+
+#canvas_nav{
+position: relative;
+left: 250px;
+top: 505px;
+
+}
+
+#canvas_nav a{
+cursor:pointer;
+color:blue;
+}
+
 #bottomdetails{
 position:absolute;
 left:220px;

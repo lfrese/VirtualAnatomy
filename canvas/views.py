@@ -25,19 +25,6 @@ def index(request):
         project_list.append(project_data)
     return render(request, 'index.html',{'my_projects':project_list})
 
-@requires_csrf_token     
-def viewpart(request, project_id, part_id, ismage_id=0):
-    part_data = Part.objects.get(pk=part_id) 
-    ismage = Ismage()
-    if ismage_id == 0:
-        ismage = Ismage.objects.filter(part=part_id).filter(order=1)
-        #print (ismage[0])
-    else:
-        ismage = Ismage.objects.get(id=ismage_id)
-        
-    layers = Layer.objects.filter(ismage = ismage)
-    
-    return render(request, 'view.html',{'image':ismage[0], 'layers':layers})
 
 @requires_csrf_token    
 def editpart(request, project_id, part_id):
@@ -58,20 +45,31 @@ def upload_image(request):
 #def post delete:   
 
 @requires_csrf_token      
-def save_layer(request):
+def save_layer(request, layer_id):
     if request.method == 'POST':  
-        image = Ismage.objects.filter(src = request.POST['ismage']);
-        if image:
-            if request.POST['audio_src'] == '':            
-                newLayer = Layer(name = request.POST['name'], description = request.POST['description'], type = request.POST['type'], layerdata = request.POST['layerdata'])
-                newLayer.save()
-                newLayer.ismage.add(image[0])
-            else:
-                newLayer = Layer(name = request.POST['name'], description = request.POST['description'], type = request.POST['type'], audio_src = request.FILE['audio_src'], layerdata = request.POST['layerdata'])
-                newLayer.save()
-                newLayer.ismage.add(image[0])
-            return HttpResponse(newLayer.id)         
-        return HttpResponse("bad img")
+        if int(layer_id) > 0: #is not new layer is edited layer. Will implement in future stage
+            #if request.method == 'POST':
+                #layer = Layer.objects.get(id=layer_id)
+                #layer.name = request.POST['name']
+                #layer.type = request.POST['type']
+                #layer.description = description = request.POST['description']
+                #if request.POST['audio_src'] != '': 
+                    #layer.audio_src = request.FILE['audio_src']
+                #layerdata = request.POST['layerdata']
+                return HttpResponse("ok") 
+        else: #is new layer
+            image = Ismage.objects.filter(src = request.POST['ismage']);
+            if image:
+                if request.POST['audio_src'] == '':            
+                    newLayer = Layer(name = request.POST['name'], description = request.POST['description'], type = request.POST['type'], layerdata = request.POST['layerdata'])
+                    newLayer.save()
+                    newLayer.ismage.add(image[0])
+                else:
+                    newLayer = Layer(name = request.POST['name'], description = request.POST['description'], type = request.POST['type'], audio_src = request.FILE['audio_src'], layerdata = request.POST['layerdata'])
+                    newLayer.save()
+                    newLayer.ismage.add(image[0])
+                return HttpResponse(newLayer.id)         
+            return HttpResponse("bad img")
  
 def get_layers_by_image_id(request, ismage_id):
     ismage = Ismage()
@@ -101,3 +99,40 @@ def get_layer_data(request, layer_id):
         return HttpResponse(json.dumps(jsonlayer))
     else:
         return HttpResponse("Error getting data from layer " + layer_id)
+        
+def delete_layer(request, layer_id):
+    layer = Layer.objects.get(id=layer_id).delete()
+    return HttpResponse("true")
+        
+def delete_ismage(request, ismage_id):
+    ismage = Ismage.objects.get(id=ismage_id)
+    layers = Layer.objects.filter(ismage = ismage)
+    layers.delete()
+    ismage.delete()
+    return HttpResponse("true")
+    
+    
+@requires_csrf_token     
+def viewpart(request, project_id, part_id, ismage_id=0):    
+    part_data = Part.objects.get(pk=part_id)
+    ismage = Ismage()
+    next = 0
+    prev = 0
+    if int(ismage_id) == 0:
+        ismage = Ismage.objects.filter(part=part_id).filter(order=1)[0]        
+        if Ismage.objects.filter(part=part_id).count() > 1:
+            next = Ismage.objects.filter(part=part_id).filter(order=2)[0].id
+    else:
+        ismage = Ismage.objects.get(id=ismage_id)
+        try:
+            prev = Ismage.objects.filter(part=part_id).filter(order=ismage.order-1)[0].id
+        except:
+            pass
+        try:
+            next = Ismage.objects.filter(part=part_id).filter(order=ismage.order+1)[0].id
+        except:
+            pass
+        
+    layers = Layer.objects.filter(ismage = ismage)
+    
+    return render(request, 'view.html',{'image':ismage, 'layers':layers, 'next':next, 'prev':prev})

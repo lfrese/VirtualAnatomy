@@ -26,7 +26,8 @@
         </div>
         <div id="layertools" style="display:none;">   
             <div id="colorpalette"></div>
-            <div id="penicon"></div>
+            <button id="newLayer" type="button">New Layer</button>
+            <div id="penicon" class="desaturate"></div>
             <div id="panicon"></div>
             Fill? <input type="checkbox" id="cbFill" name="Fill" value="Fill" checked> 
             <div id="do"><div id="undo"></div><div id="redo"></div></div>
@@ -46,7 +47,7 @@
             <div class="vertical-text">Layers</div></div>
             <div id="layercontainer">
                 <div class="layer_controls">
-                    <div class="layer_control show_all_layers">SHOW ALL</div> | 
+                   <!-- <div class="layer_control show_all_layers">SHOW ALL</div> | -->
                     <div class="layer_control clear_all_layers">HIDE ALL</div>
                 </div>
             </div>
@@ -60,7 +61,8 @@
                     {% if images %}
                     {% for image in images %}
                     <li class="layer" id="{{image.id}}">
-                        <img src="/canvas/media/{{ image.src }} " >
+                        <img src="/canvas/media/{{ image.src }} " ><br>
+                        <div class="delete_image">Delete Image</div>
                     </li>  
                     {% endfor %}  
                     {% endif %}

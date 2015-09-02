@@ -13,7 +13,7 @@
         {% if layers %}
             <ul>
             {% for layer in layers %}
-                <li><div id="layer{{layer.id}}" class="layer">{{ layer.name }}</div></li>
+                <li><div data-item-index="{{layer.id}}" class="layer">{{ layer.name }}</div></li>
             {% endfor %}
             </ul>
         {% endif %}
@@ -23,7 +23,14 @@
     <section id="maincanvas">
     
     </section>
-    
+    <section id="canvas_nav">
+        {% if next > 0 %}
+            <a class="next_image" href="/canvas/project/1/part/1/view/image/{{next}}">Next</a> 
+        {% endif %}
+        {% if prev > 0 %}
+            <a class="next_image" href="/canvas/project/1/part/1/view/image/{{prev}}">Prev</a> 
+        {% endif %}
+    </section>
     <section id="bottomdetails">
         <div id="detailname"></div>
         <div id="detaildetails"></div>
@@ -33,26 +40,18 @@
 
 <script>
 $(document).ready(function() {
-    setBackground("/canvas/media/{{image}}");
-    var layers = []
-    var layerlist = []
-     {% if layers %}
-        var i = 0;
-            {% for layer in layers %}
-                layers[i] = {"id":"{{layer.id}}","name":"{{ layer.name }}","description":"{{layer.description}}","type":"{{layer.type}}","layerdata":{{layer.layerdata|safe}} }
-                layerlist[i] = {{layer.id}}
-                i++;
-            {% endfor %}
-        {% endif %}
+    setBackground("/canvas/media/{{image}}", {{image.id}});
+    //var layers = []
+    //var layerlist = []
+     //{% if layers %}
+        //var i = 0;
+            //{% for layer in layers %}
+                //layers[i] = {"id":"{{layer.id}}","name":"{{ layer.name }}","description":"{{layer.description}}","type":"{{layer.type}}","layerdata":{{layer.layerdata|safe}} }
+                //layerlist[i] = {{layer.id}}
+               // i++;
+            //{% endfor %}
+      //  {% endif %}
         
-    $("#viewlayers .layer").click(function(){
-        var thisid = $(this).attr("id");
-        var layerid = thisid.replace("layer","");
-        var index = layerlist.indexOf(parseInt(layerid));
-        var layerdata = layers[index]
-        $("#detailname").text(layerdata.name);
-        $("#detaildetails").text(layerdata.description);
-    });
     
 });
 </script>

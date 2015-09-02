@@ -1,19 +1,14 @@
 //Handles view controls
-
-// function getLayerData(layerid){
-    // getCSRF();
-    // $.ajax({ 
-            // type: "POST",
-            // url: "/canvas/getlayerdata/",
-            // data: {layerid:layerid},
-            // success: function(returned){
-               // console.log(returned);
-            // },
-            // error: function(returned){
-                // console.log(returned);
-            // }
-        // });
-// }
+$(document).ready(function() {	
+    
+    $("#viewlayers").on("click", ".layer", function(){
+        viewLayerData($(this).attr("data-item-index"));
+    });
+    
+    $("#canvas_nav .next_image").click(function(){
+        window.location = "/canvas/project/1/part/1/view/image/"+$(this).attr("data_item_index");
+    });
+});
 
 
 //needed to get the CSRF token otherwise
